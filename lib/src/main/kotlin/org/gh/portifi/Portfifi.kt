@@ -6,6 +6,9 @@ import io.netty.channel.nio.NioEventLoopGroup
 import io.netty.channel.socket.nio.NioServerSocketChannel
 import java.util.concurrent.Semaphore
 
+const val BACKEND_PORT = 8080
+const val FRONTEND_PORT = 9999
+
 class Portfifi(private val specs: List<ProxySpec>) {
     private val stop = Semaphore(1)
     private val stopActions = mutableListOf<Runnable>()
@@ -49,10 +52,10 @@ fun ProxySpec.asServer(): Portfifi {
 }
 
 fun main() {
-    val server = ProxySpecBuilder(8080)
+    val server = ProxySpecBuilder(BACKEND_PORT)
         .build()
         .asServer()
-        .start(9999)
+        .start(FRONTEND_PORT)
     Runtime.getRuntime().addShutdownHook(Thread {
         server.stop()
     })
