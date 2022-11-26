@@ -22,23 +22,25 @@ class FrontHandler(private val port: Int) : ChannelInboundHandlerAdapter() {
             .handler(BackHandler(inboundChannel))
         val f: ChannelFuture = b.connect("localhost", port)
         this.outboundChannel = f.channel()
-        f.addListener(ChannelFutureListener { future ->
-            if (future.isSuccess) {
-                inboundChannel.read()
-            } else {
-                inboundChannel.close()
+        f.addListener(
+            ChannelFutureListener { future ->
+                if (future.isSuccess) {
+                    inboundChannel.read()
+                } else {
+                    inboundChannel.close()
+                }
             }
-        })
+        )
     }
 
     override fun channelRead(ctx: ChannelHandlerContext, msg: Any) {
         outboundChannel ?: return
         if (outboundChannel!!.isActive) {
             outboundChannel!!.writeAndFlush(msg)
-                .addListener(ChannelFutureListener{
-                    if(it.isSuccess){
+                .addListener(ChannelFutureListener {
+                    if (it.isSuccess) {
                         ctx.channel().read()
-                    }else{
+                    } else {
                         it.channel().close()
                     }
                 })

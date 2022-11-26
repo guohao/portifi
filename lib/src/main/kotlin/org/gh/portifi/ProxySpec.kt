@@ -5,7 +5,7 @@ interface ProxySpec {
 }
 
 class ProxySpecBuilder(private val port: Int) {
-    fun build():ProxySpec = SimpleProxySpec(port)
+    fun build(): ProxySpec = SimpleProxySpec(port)
 }
 
 class SimpleProxySpec(private val port: Int) : ProxySpec {

@@ -10,15 +10,18 @@ class BackHandler(private val inboundChannel: Channel) : ChannelInboundHandlerAd
     override fun channelActive(ctx: ChannelHandlerContext) {
         ctx.read()
     }
+
     override fun channelRead(ctx: ChannelHandlerContext, msg: Any) {
         inboundChannel.writeAndFlush(msg)
-            .addListener(ChannelFutureListener{
-                if(it.isSuccess){
-                    ctx.channel().read()
-                }else{
-                    it.channel().close()
+            .addListener(
+                ChannelFutureListener {
+                    if (it.isSuccess) {
+                        ctx.channel().read()
+                    } else {
+                        it.channel().close()
+                    }
                 }
-            })
+            )
     }
 
     override fun channelInactive(ctx: ChannelHandlerContext) {

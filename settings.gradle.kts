@@ -10,4 +10,3 @@
 
 rootProject.name = "portifi"
 include("lib")
-

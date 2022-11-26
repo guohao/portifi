@@ -56,8 +56,10 @@ fun main() {
         .build()
         .asServer()
         .start(FRONTEND_PORT)
-    Runtime.getRuntime().addShutdownHook(Thread {
-        server.stop()
-    })
+    Runtime.getRuntime().addShutdownHook(
+        Thread {
+            server.stop()
+        }
+    )
     server.blockUntilStop()
 }
