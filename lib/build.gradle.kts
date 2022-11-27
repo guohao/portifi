@@ -23,10 +23,13 @@ repositories {
 
 dependencies {
     // Align versions of all Kotlin components
-    implementation(platform("org.jetbrains.kotlin:kotlin-bom"))
+    api(platform("org.jetbrains.kotlin:kotlin-bom"))
 
     // Use the Kotlin JDK 8 standard library.
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+    api("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+
+    // https://mvnrepository.com/artifact/org.slf4j/slf4j-api
+    api("org.slf4j:slf4j-api:2.0.5")
 
     // https://mvnrepository.com/artifact/io.netty/netty-all
     api("io.netty:netty-all:4.1.85.Final")
