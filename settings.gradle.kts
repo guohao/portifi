@@ -9,4 +9,5 @@
  */
 
 rootProject.name = "portifi"
-include("lib")
+include(":lib")
+include(":examples")
