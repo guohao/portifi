@@ -7,20 +7,11 @@ import io.netty.channel.ChannelHandlerContext
 import io.netty.channel.ChannelInboundHandlerAdapter
 
 class BackHandler(private val inboundChannel: Channel) : ChannelInboundHandlerAdapter() {
-    override fun channelActive(ctx: ChannelHandlerContext) {
-        ctx.read()
-    }
 
     override fun channelRead(ctx: ChannelHandlerContext, msg: Any) {
         inboundChannel.writeAndFlush(msg)
             .addListener(
-                ChannelFutureListener {
-                    if (it.isSuccess) {
-                        ctx.channel().read()
-                    } else {
-                        it.channel().close()
-                    }
-                }
+                ChannelFutureListener.CLOSE_ON_FAILURE
             )
     }
 

@@ -6,13 +6,14 @@ import io.netty.channel.nio.NioEventLoopGroup
 import io.netty.channel.socket.nio.NioServerSocketChannel
 import java.util.concurrent.Semaphore
 
-const val BACKEND_PORT = 8080
+const val HTTP_BACKEND_PORT = 8080
+const val RESP_BACKEND_PORT = 6379
 const val FRONTEND_PORT = 9999
 
-class Portfifi(private val specs: List<ProxySpec>) {
+class Portifi(private val specs: List<ProxySpec>) {
     private val stop = Semaphore(1)
     private val stopActions = mutableListOf<Runnable>()
-    fun start(port: Int): Portfifi {
+    fun start(port: Int): Portifi {
         if (!stop.tryAcquire()) {
             return this
         }
@@ -21,7 +22,6 @@ class Portfifi(private val specs: List<ProxySpec>) {
         val bootstrap = ServerBootstrap()
             .group(boss, worker)
             .channel(NioServerSocketChannel::class.java)
-            .childOption(ChannelOption.AUTO_READ, false)
             .childHandler(InboundHandlerInitializer(specs))
             .bind(port)
         stopActions.add {
@@ -43,18 +43,23 @@ class Portfifi(private val specs: List<ProxySpec>) {
     }
 }
 
-fun List<ProxySpec>.asServer(): Portfifi {
-    return Portfifi(this)
+fun List<ProxySpec>.asServer(): Portifi {
+    return Portifi(this)
 }
 
-fun ProxySpec.asServer(): Portfifi {
+fun ProxySpec.asServer(): Portifi {
     return listOf(this).asServer()
 }
 
 fun main() {
-    val server = ProxySpecBuilder(BACKEND_PORT)
-        .build()
-        .asServer()
+    val server = listOf(
+        ProxySpecBuilder(HTTP_BACKEND_PORT)
+            .protocol(Protocol.HTTP1_1)
+            .build(),
+        ProxySpecBuilder(RESP_BACKEND_PORT)
+            .protocol(Protocol.RESP)
+            .build()
+    ).asServer()
         .start(FRONTEND_PORT)
     Runtime.getRuntime().addShutdownHook(
         Thread {
