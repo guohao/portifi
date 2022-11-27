@@ -10,9 +10,9 @@ import io.netty.channel.ChannelInboundHandlerAdapter
 import io.netty.channel.ChannelPromise
 
 class FrontHandler(private val port: Int) : ChannelInboundHandlerAdapter() {
-    private var connectPromise: ChannelPromise? = null
+    private lateinit var connectPromise: ChannelPromise
 
-    private var outboundChannel: Channel? = null
+    private lateinit var outboundChannel: Channel
 
     override fun handlerAdded(ctx: ChannelHandlerContext) {
         val inboundChannel = ctx.channel()
@@ -26,20 +26,19 @@ class FrontHandler(private val port: Int) : ChannelInboundHandlerAdapter() {
         f.addListener(
             ChannelFutureListener { future ->
                 if (future.isSuccess) {
-                    connectPromise?.trySuccess()
+                    connectPromise.trySuccess()
                 } else {
-                    connectPromise?.tryFailure(future.cause())
+                    connectPromise.tryFailure(future.cause())
                 }
             }
         )
     }
 
     override fun channelRead(ctx: ChannelHandlerContext, msg: Any) {
-        outboundChannel ?: return
-        if (outboundChannel!!.isActive) {
+        if (outboundChannel.isActive) {
             writeToBack(msg)
         } else {
-            connectPromise?.addListener {
+            connectPromise.addListener {
                 if (it.isSuccess) {
                     writeToBack(msg)
                 } else {
@@ -50,12 +49,12 @@ class FrontHandler(private val port: Int) : ChannelInboundHandlerAdapter() {
     }
 
     private fun writeToBack(msg: Any) {
-        outboundChannel!!.writeAndFlush(msg)
+        outboundChannel.writeAndFlush(msg)
             .addListener(ChannelFutureListener.CLOSE_ON_FAILURE)
     }
 
     override fun channelInactive(ctx: ChannelHandlerContext) {
-        outboundChannel?.writeAndFlush(Unpooled.EMPTY_BUFFER)
+        outboundChannel.writeAndFlush(Unpooled.EMPTY_BUFFER)
             ?.addListener(ChannelFutureListener.CLOSE)
     }
 
