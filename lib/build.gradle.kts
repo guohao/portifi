@@ -30,7 +30,6 @@ dependencies {
 
     // https://mvnrepository.com/artifact/io.netty/netty-all
     api("io.netty:netty-all:4.1.85.Final")
-
 }
 
 testing {

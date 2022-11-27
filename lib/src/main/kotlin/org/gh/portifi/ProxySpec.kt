@@ -6,7 +6,7 @@ enum class Protocol {
     HTTP2,
     RESP,
     SOCKS5,
-    MQTT,
+    MQTT
 }
 
 interface ProxySpec {
@@ -20,7 +20,7 @@ class ProxySpecBuilder(
     private val port: Int,
     private val protocol: Protocol = Protocol.RAW,
     private val host: String = "localhost",
-    private val enableTls: Boolean = false,
+    private val enableTls: Boolean = false
 ) {
     fun protocol(protocol: Protocol): ProxySpecBuilder = ProxySpecBuilder(port, protocol, host, enableTls)
     fun host(host: String): ProxySpecBuilder = ProxySpecBuilder(port, protocol, host, enableTls)

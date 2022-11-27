@@ -20,5 +20,4 @@ class PortifiHandler(private val specs: List<ProxySpec>) : ByteToMessageDecoder(
                 .remove(this)
         }
     }
-
 }

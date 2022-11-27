@@ -1,7 +1,6 @@
 package org.gh.portifi
 
 import io.netty.bootstrap.ServerBootstrap
-import io.netty.channel.ChannelOption
 import io.netty.channel.nio.NioEventLoopGroup
 import io.netty.channel.socket.nio.NioServerSocketChannel
 import java.util.concurrent.Semaphore
