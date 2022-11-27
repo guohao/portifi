@@ -2,7 +2,8 @@ package org.gh.portifi.protocol
 
 import org.gh.portifi.Protocol
 
-val detectors = listOf(HttpDetector(), RespDetector())
+val detectors = listOf(HttpDetector(), RespDetector(), RawProtocol())
+val protocolToDetectors = detectors.associateBy(ProtocolDetector::protocol)
 fun Protocol.asDetector(): ProtocolDetector {
-    return detectors.first { it.protocol() == this }
+    return protocolToDetectors[this]!!
 }

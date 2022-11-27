@@ -6,7 +6,6 @@ import org.gh.portifi.Protocol
 
 class RespDetector : ProtocolDetector {
     override fun protocol(): Protocol = Protocol.RESP
-    override fun needMoreBytes(input: ByteBuf): Boolean = false
 
     override fun accept(input: ByteBuf): Boolean {
         input.markReaderIndex()

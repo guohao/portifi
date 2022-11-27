@@ -8,7 +8,7 @@ interface ProtocolDetector {
 
     fun protocol(): Protocol
 
-    fun needMoreBytes(input: ByteBuf): Boolean
+    fun needMoreBytes(input: ByteBuf): Boolean = false
 
     fun accept(input: ByteBuf): Boolean
 
