@@ -25,6 +25,7 @@ class Portifi(private val specs: List<ProxySpec>) {
             .childHandler(InboundHandlerInitializer(specs))
             .bind(port)
         stopActions.add {
+            bootstrap.channel().close()
             bootstrap.channel().closeFuture().sync()
             boss.shutdownGracefully()
             worker.shutdownGracefully()
