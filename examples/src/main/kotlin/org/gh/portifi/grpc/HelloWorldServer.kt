@@ -43,10 +43,6 @@ class HelloWorldServer(private val port: Int) {
         server.shutdown()
     }
 
-    fun blockUntilShutdown() {
-        server.awaitTermination()
-    }
-
     internal class HelloWorldService : GreeterGrpc.GreeterImplBase() {
         override fun sayHello(request: HelloRequest, responseObserver: StreamObserver<HelloReply>) {
             val reply = HelloReply.newBuilder()
