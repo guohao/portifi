@@ -1,8 +1,8 @@
-package org.gh.portifi.protocol
+package io.github.gh.portifi.protocol
 
+import io.github.gh.portifi.Protocol
 import io.netty.buffer.ByteBuf
 import io.netty.channel.ChannelHandlerContext
-import org.gh.portifi.Protocol
 
 interface ProtocolDetector {
 

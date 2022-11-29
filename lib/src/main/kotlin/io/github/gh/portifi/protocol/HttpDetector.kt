@@ -1,7 +1,7 @@
-package org.gh.portifi.protocol
+package io.github.gh.portifi.protocol
 
+import io.github.gh.portifi.Protocol
 import io.netty.buffer.ByteBuf
-import org.gh.portifi.Protocol
 
 const val MIN_BYTES_TO_DETECT = 2
 

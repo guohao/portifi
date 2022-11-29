@@ -1,7 +1,6 @@
 package io.github.gh.portifi
 
 import com.charleskorn.kaml.Yaml
-import org.gh.portifi.Portifi
 
 const val CONFIG_FILE = "portifi.yml"
 

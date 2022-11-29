@@ -1,9 +1,6 @@
 package io.github.gh.portifi
 
 import kotlinx.serialization.Serializable
-import org.gh.portifi.Protocol
-import org.gh.portifi.ProxySpec
-import org.gh.portifi.ProxySpecBuilder
 
 @Serializable
 data class ProxyConfig(

@@ -1,9 +1,9 @@
-package org.gh.portifi.redis
+package io.github.gh.portifi.redis
 
-import org.gh.portifi.Portifi
-import org.gh.portifi.Protocol
-import org.gh.portifi.ProxySpecBuilder
-import org.gh.portifi.asServer
+import io.github.gh.portifi.Portifi
+import io.github.gh.portifi.Protocol
+import io.github.gh.portifi.ProxySpecBuilder
+import io.github.gh.portifi.asServer
 import org.redisson.Redisson
 import org.redisson.api.redisnode.RedisNodes
 import org.redisson.config.Config

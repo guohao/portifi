@@ -1,4 +1,4 @@
-package org.gh.portifi
+package io.github.gh.portifi
 
 enum class Protocol {
     RAW,

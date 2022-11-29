@@ -1,9 +1,9 @@
-package org.gh.portifi.protocol
+package io.github.gh.portifi.protocol
 
+import io.github.gh.portifi.Protocol
 import io.netty.buffer.ByteBuf
 import io.netty.buffer.ByteBufUtil
 import io.netty.handler.codec.http2.Http2CodecUtil
-import org.gh.portifi.Protocol
 import kotlin.math.min
 
 class Http2Detector : ProtocolDetector {

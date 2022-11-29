@@ -1,13 +1,13 @@
-package org.gh.portifi.grpc
+package io.github.gh.portifi.grpc
 
 import HelloWorldServer
+import io.github.gh.portifi.Portifi
+import io.github.gh.portifi.Protocol
+import io.github.gh.portifi.ProxySpecBuilder
+import io.github.gh.portifi.asServer
 import io.grpc.Grpc
 import io.grpc.InsecureChannelCredentials
 import io.grpc.Server
-import org.gh.portifi.Portifi
-import org.gh.portifi.Protocol
-import org.gh.portifi.ProxySpecBuilder
-import org.gh.portifi.asServer
 
 private const val BACK_PORT = 50051
 private const val FRONT_PORT = 9999

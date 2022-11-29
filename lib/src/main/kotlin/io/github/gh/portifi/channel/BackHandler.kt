@@ -1,4 +1,4 @@
-package org.gh.portifi.channel
+package io.github.gh.portifi.channel
 
 import io.netty.channel.Channel
 import io.netty.channel.ChannelHandlerContext

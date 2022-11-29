@@ -1,9 +1,9 @@
-package org.gh.portifi.http
+package io.github.gh.portifi.http
 
-import org.gh.portifi.Portifi
-import org.gh.portifi.Protocol
-import org.gh.portifi.ProxySpecBuilder
-import org.gh.portifi.asServer
+import io.github.gh.portifi.Portifi
+import io.github.gh.portifi.Protocol
+import io.github.gh.portifi.ProxySpecBuilder
+import io.github.gh.portifi.asServer
 import org.http4k.client.JavaHttpClient
 import org.http4k.core.HttpHandler
 import org.http4k.core.Method

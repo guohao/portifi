@@ -1,8 +1,8 @@
-package org.gh.portifi.protocol
+package io.github.gh.portifi.protocol
 
+import io.github.gh.portifi.Protocol
 import io.netty.buffer.ByteBuf
 import io.netty.handler.codec.redis.RedisMessageType
-import org.gh.portifi.Protocol
 
 class RespDetector : ProtocolDetector {
     override fun protocol(): Protocol = Protocol.RESP

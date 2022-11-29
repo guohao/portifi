@@ -1,4 +1,4 @@
-package org.gh.portifi.grpc
+package io.github.gh.portifi.grpc
 
 import io.grpc.Channel
 import io.grpc.StatusRuntimeException

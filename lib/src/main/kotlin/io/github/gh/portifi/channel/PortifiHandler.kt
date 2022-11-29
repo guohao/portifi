@@ -1,10 +1,10 @@
-package org.gh.portifi.channel
+package io.github.gh.portifi.channel
 
+import io.github.gh.portifi.ProxySpec
+import io.github.gh.portifi.protocol.asDetector
 import io.netty.buffer.ByteBuf
 import io.netty.channel.ChannelHandlerContext
 import io.netty.handler.codec.ByteToMessageDecoder
-import org.gh.portifi.ProxySpec
-import org.gh.portifi.protocol.asDetector
 
 class PortifiHandler(private val specs: List<ProxySpec>) : ByteToMessageDecoder() {
     override fun decode(ctx: ChannelHandlerContext, input: ByteBuf, out: MutableList<Any>) {
