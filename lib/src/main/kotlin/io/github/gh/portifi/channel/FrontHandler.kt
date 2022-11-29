@@ -17,7 +17,7 @@ class FrontHandler(private val spec: ProxySpec) : ChannelInboundHandlerAdapter()
     override fun handlerAdded(ctx: ChannelHandlerContext) {
         val inboundChannel = ctx.channel()
         val b = Bootstrap()
-        b.group(inboundChannel.eventLoop())
+            .group(inboundChannel.eventLoop())
             .channel(ctx.channel().javaClass)
             .handler(BackHandler(inboundChannel))
         val f: ChannelFuture = b.connect(spec.host(), spec.port())
