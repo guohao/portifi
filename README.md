@@ -3,18 +3,20 @@
 [![Java CI with Gradle](https://github.com/guohao/portifi/actions/workflows/gradle.yml/badge.svg)](https://github.com/guohao/portifi/actions/workflows/gradle.yml)
 [![License](https://img.shields.io/github/license/guohao/portifi)](https://opensource.org/licenses/Apache-2.0)
 
-A reverse proxy supports binding multiple protocols at a same port
+A powerful reverse proxy redirecting multiple protocols on a same port.
 
 ## Features
 
-- Export service at **SAME** port with multiple protocols:HTTP1.1/ HTTP/2(gRPC)/ redis
+- Redirect network traffic from **ONE** port with multiple protocols:HTTP1.1/ HTTP/2(gRPC)/ redis
 - Use as a SDK or deploy as a standalone proxy
 
 ## Usage Scenarios
 
-- **Protocol Upgrade:** Migrate protocols effortlessly with minor code changes. HTTP/1.1 -> gRPC etc.
-- **Unary Gateway:** Act as an all-in-one gateway to hide a complex system topology
-- **Negotiator Component:** Interact with heterogeneous systems
+- **Protocol Upgrade:** Adopt a newer/better protocol to strengthen your app without changing origin behaviors. HTTP/1.1
+  -> gRPC etc.
+- **Unary Gateway:** Act as an all-in-one gateway to hide the complex topology of internal system.
+- **FaaS Negotiator Component :** Talk to different 3rd-party systems with **ZERO** configuration.
+- **Faraway from Legacy Systems**: No need to modify DNS or protocol's config of those corrupt apps.
 
 ## Quick Start
 
@@ -28,7 +30,6 @@ Or read this quick start.
 
 Add `Portifi` to your project's `build.gradle.kts`.
 
-### Gradle(KTS)
 ```kotlin
 dependencies {
     implementation("io.github.gh:portifi:x.y.z")
@@ -47,13 +48,14 @@ fun main() {
 }
 ```
 
-Start a backend HTTP server at 8080, here is the simplest way with python3.
-### Python3
+Start a backend HTTP server at 8080 (python3 as a sample).
+
 ```shell
-python3 -m http.server 8080
+$ python3 -m http.server 8080
 ```
 
 Run a test
+
 ```shell
-curl localhost:9999
+$ curl localhost:9999
 ```
