@@ -15,12 +15,6 @@ plugins {
     `java-library`
 }
 
-repositories {
-    // Use Maven Central for resolving dependencies.
-    mavenLocal()
-    mavenCentral()
-}
-
 dependencies {
     // Align versions of all Kotlin components
     api(platform("org.jetbrains.kotlin:kotlin-bom"))

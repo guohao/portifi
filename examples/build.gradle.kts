@@ -5,12 +5,6 @@ plugins {
     kotlin("jvm")
     id("com.google.protobuf") version "0.9.1"
 }
-repositories {
-    // Use Maven Central for resolving dependencies.
-    mavenLocal()
-    maven("https://plugins.gradle.org/m2/")
-    mavenCentral()
-}
 
 sourceSets {
     main {

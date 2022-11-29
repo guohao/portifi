@@ -3,3 +3,12 @@ plugins {
 }
 group = "io.github.gh"
 version = "0.0.1-SNAPSHOT"
+
+allprojects {
+    repositories {
+        // Use Maven Central for resolving dependencies.
+        mavenLocal()
+        mavenCentral()
+        maven("https://plugins.gradle.org/m2/")
+    }
+}

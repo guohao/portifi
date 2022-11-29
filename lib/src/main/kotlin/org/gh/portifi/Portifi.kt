@@ -16,7 +16,8 @@ const val FRONTEND_PORT = 9999
 class Portifi(private val specs: List<ProxySpec>) {
     private val stop = Semaphore(1)
     private val stopActions = mutableListOf<Runnable>()
-    fun start(port: Int): Portifi {
+    fun start(port: Int): Portifi = start("0.0.0.0", port)
+    fun start(host: String, port: Int): Portifi {
         if (!stop.tryAcquire()) {
             return this
         }
@@ -33,7 +34,7 @@ class Portifi(private val specs: List<ProxySpec>) {
                     }
                 }
             )
-            .bind(port)
+            .bind(host, port)
         stopActions.add {
             bootstrap.channel().close()
             bootstrap.channel().closeFuture().sync()

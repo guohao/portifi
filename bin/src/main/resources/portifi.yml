@@ -1,0 +1,9 @@
+port: 9999
+host: 0.0.0.0
+specs:
+  - protocol: HTTP1_1
+    port: 8080
+    host: localhost
+  - protocol: RESP
+    port: 6379
+    host: localhost

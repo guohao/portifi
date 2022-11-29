@@ -10,4 +10,16 @@
 
 rootProject.name = "portifi"
 include(":lib")
+include(":bin")
 include(":examples")
+
+dependencyResolutionManagement {
+    versionCatalogs {
+        create("libs") {
+            val logback = "1.4.5"
+            library("logback-classic", "ch.qos.logback:logback-classic:$logback")
+            library("logback-core", "ch.qos.logback:logback-core:$logback")
+            bundle("logback", listOf("logback-classic", "logback-core"))
+        }
+    }
+}
