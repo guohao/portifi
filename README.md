@@ -36,7 +36,7 @@ dependencies {
 }
 ```
 
-Start `Portifi` server at port `9999`.
+Start `Portifi` server to proxy HTTP(8080) on port `9999`.
 
 ```kotlin
 fun main() {
@@ -44,7 +44,7 @@ fun main() {
         .protocol(Protocol.HTTP1_1)
         .build()
         .asServer()
-        .start()
+        .start(9999)
 }
 ```
 
