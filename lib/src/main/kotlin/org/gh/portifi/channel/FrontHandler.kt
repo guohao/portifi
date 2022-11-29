@@ -1,4 +1,4 @@
-package org.gh.portifi
+package org.gh.portifi.channel
 
 import io.netty.bootstrap.Bootstrap
 import io.netty.channel.Channel
@@ -7,6 +7,7 @@ import io.netty.channel.ChannelFutureListener
 import io.netty.channel.ChannelHandlerContext
 import io.netty.channel.ChannelInboundHandlerAdapter
 import io.netty.channel.ChannelPromise
+import org.gh.portifi.ProxySpec
 
 class FrontHandler(private val spec: ProxySpec) : ChannelInboundHandlerAdapter() {
     private lateinit var connectPromise: ChannelPromise
