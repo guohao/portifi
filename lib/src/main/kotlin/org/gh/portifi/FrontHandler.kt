@@ -1,7 +1,6 @@
 package org.gh.portifi
 
 import io.netty.bootstrap.Bootstrap
-import io.netty.buffer.Unpooled
 import io.netty.channel.Channel
 import io.netty.channel.ChannelFuture
 import io.netty.channel.ChannelFutureListener
@@ -9,7 +8,7 @@ import io.netty.channel.ChannelHandlerContext
 import io.netty.channel.ChannelInboundHandlerAdapter
 import io.netty.channel.ChannelPromise
 
-class FrontHandler(private val port: Int) : ChannelInboundHandlerAdapter() {
+class FrontHandler(private val spec: ProxySpec) : ChannelInboundHandlerAdapter() {
     private lateinit var connectPromise: ChannelPromise
 
     private lateinit var outboundChannel: Channel
@@ -20,7 +19,7 @@ class FrontHandler(private val port: Int) : ChannelInboundHandlerAdapter() {
         b.group(inboundChannel.eventLoop())
             .channel(ctx.channel().javaClass)
             .handler(BackHandler(inboundChannel))
-        val f: ChannelFuture = b.connect("localhost", port)
+        val f: ChannelFuture = b.connect(spec.host(), spec.port())
         this.outboundChannel = f.channel()
         this.connectPromise = ctx.newPromise()
         f.addListener(
@@ -49,19 +48,15 @@ class FrontHandler(private val port: Int) : ChannelInboundHandlerAdapter() {
     }
 
     private fun writeToBack(msg: Any) {
-        outboundChannel.writeAndFlush(msg)
-            .addListener(ChannelFutureListener.CLOSE_ON_FAILURE)
+        outboundChannel.flushAndCloseOnFailure(msg)
     }
 
     override fun channelInactive(ctx: ChannelHandlerContext) {
-        outboundChannel.writeAndFlush(Unpooled.EMPTY_BUFFER)
-            ?.addListener(ChannelFutureListener.CLOSE)
+        outboundChannel.flushAndClose()
     }
 
     override fun exceptionCaught(ctx: ChannelHandlerContext, cause: Throwable) {
         cause.printStackTrace()
-        ctx.channel()
-            .writeAndFlush(Unpooled.EMPTY_BUFFER)
-            .addListener(ChannelFutureListener.CLOSE)
+        ctx.channel().flushAndClose()
     }
 }

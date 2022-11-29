@@ -16,7 +16,7 @@ class PortifiHandler(private val specs: List<ProxySpec>) : ByteToMessageDecoder(
             }
         }?.also {
             ctx.pipeline()
-                .addLast(FrontHandler(it.port()))
+                .addLast(FrontHandler(it))
                 .remove(this)
         } ?: run {
             specs.firstOrNull { it.protocol().asDetector().needMoreBytes(input) }
