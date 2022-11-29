@@ -1,6 +1,8 @@
 package org.gh.portifi
 
 import io.netty.bootstrap.ServerBootstrap
+import io.netty.channel.Channel
+import io.netty.channel.ChannelInitializer
 import io.netty.channel.nio.NioEventLoopGroup
 import io.netty.channel.socket.nio.NioServerSocketChannel
 import java.util.concurrent.Semaphore
@@ -22,7 +24,14 @@ class Portifi(private val specs: List<ProxySpec>) {
         val bootstrap = ServerBootstrap()
             .group(boss, worker)
             .channel(NioServerSocketChannel::class.java)
-            .childHandler(InboundHandlerInitializer(specs))
+            .childHandler(
+                object : ChannelInitializer<Channel>() {
+                    override fun initChannel(ch: Channel) {
+                        ch.pipeline()
+                            .addLast(PortifiHandler(specs))
+                    }
+                }
+            )
             .bind(port)
         stopActions.add {
             bootstrap.channel().close()

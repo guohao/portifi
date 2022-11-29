@@ -16,18 +16,25 @@ class HttpDetector : ProtocolDetector {
         return when (magic1) {
             'G' ->
                 magic2 == 'E'
+
             'P' ->
                 magic2 == 'O' || magic2 == 'U' || magic2 == 'A'
+
             'H' ->
                 magic2 == 'E'
+
             'D' ->
                 magic2 == 'E'
+
             'O' ->
                 magic2 == 'P'
+
             'T' ->
                 magic2 == 'R'
+
             'C' ->
                 magic2 == 'O'
+
             else ->
                 false
         }
