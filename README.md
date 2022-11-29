@@ -1,5 +1,8 @@
 # portifi
 
+[![Java CI with Gradle](https://github.com/guohao/portifi/actions/workflows/gradle.yml/badge.svg)](https://github.com/guohao/portifi/actions/workflows/gradle.yml)
+[![License](https://img.shields.io/github/license/guohao/portifi)](https://opensource.org/licenses/Apache-2.0)
+
 A reverse proxy supports binding multiple protocols at a same port
 
 ## Features
