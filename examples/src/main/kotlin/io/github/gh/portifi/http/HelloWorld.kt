@@ -13,9 +13,12 @@ import org.http4k.core.Status.Companion.OK
 import org.http4k.server.Http4kServer
 import org.http4k.server.Undertow
 import org.http4k.server.asServer
+import org.slf4j.LoggerFactory
 
 private const val BACK_PORT = 8080
 private const val FRONT_PORT = 9999
+
+private val log = LoggerFactory.getLogger(HelloWorld::class.java)
 
 class HelloWorld {
     private lateinit var backend: Http4kServer
@@ -44,6 +47,6 @@ fun main() {
 
     val client: HttpHandler = JavaHttpClient()
 
-    println(client(request))
+    log.info("${client(request)}")
     helloWorld.stop()
 }

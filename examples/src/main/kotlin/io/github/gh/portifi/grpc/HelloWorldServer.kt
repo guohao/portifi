@@ -21,6 +21,9 @@ import io.grpc.examples.helloworld.GreeterGrpc
 import io.grpc.examples.helloworld.HelloReply
 import io.grpc.examples.helloworld.HelloRequest
 import io.grpc.stub.StreamObserver
+import org.slf4j.LoggerFactory
+
+private val log = LoggerFactory.getLogger(HelloWorldServer::class.java.name)
 
 class HelloWorldServer(private val port: Int) {
     val server: Server = Grpc.newServerBuilderForPort(port, InsecureServerCredentials.create())
@@ -29,7 +32,7 @@ class HelloWorldServer(private val port: Int) {
 
     fun start() {
         server.start()
-        println("Server started, listening on $port")
+        log.info("Server started, listening on $port")
         Runtime.getRuntime().addShutdownHook(
             Thread {
                 println("*** shutting down gRPC server since JVM is shutting down")

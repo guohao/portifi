@@ -7,10 +7,13 @@ import io.github.gh.portifi.asServer
 import org.redisson.Redisson
 import org.redisson.api.redisnode.RedisNodes
 import org.redisson.config.Config
+import org.slf4j.LoggerFactory
 import redis.embedded.RedisServer
 
 private const val BACK_PORT = 6379
 private const val FRONT_PORT = 9999
+
+private val log = LoggerFactory.getLogger(PingPong::class.java)
 
 class PingPong {
     private lateinit var backend: RedisServer
@@ -36,8 +39,11 @@ fun main() {
     val pingPong = PingPong()
     pingPong.start()
     val config = Config()
-    config.useSingleServer().address = "redis://localhost:$FRONT_PORT"
+        .apply {
+            useSingleServer().address = "redis://localhost:$FRONT_PORT"
+        }
     val client = Redisson.create(config)
-    println(client.getRedisNodes(RedisNodes.SINGLE).instance.ping())
+    val ret = client.getRedisNodes(RedisNodes.SINGLE).instance.ping()
+    log.info("Ping: $ret")
     pingPong.stop()
 }

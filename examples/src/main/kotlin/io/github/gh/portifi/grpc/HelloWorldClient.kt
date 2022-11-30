@@ -7,10 +7,11 @@ import io.grpc.examples.helloworld.HelloReply
 import io.grpc.examples.helloworld.HelloRequest
 import org.slf4j.LoggerFactory
 
+private val logger = LoggerFactory.getLogger(HelloWorldClient::class.java.name)
+
 class HelloWorldClient(channel: Channel) {
 
     private val blockingStub = GreeterGrpc.newBlockingStub(channel)
-    private val logger = LoggerFactory.getLogger(HelloWorldClient::class.java.name)
 
     /** Say hello to server.  */
     fun greet(name: String) {
