@@ -10,6 +10,8 @@ A powerful reverse proxy redirecting multiple protocols on a same port.
 - Redirect network traffic from **ONE** port with multiple protocols:HTTP1.1/ HTTP/2(gRPC)/ redis
 - Use as a SDK or deploy as a standalone proxy
 
+![arch](res/arch.png)
+
 ## Usage Scenarios
 
 - **Protocol Upgrade:** Adopt a newer/better protocol to strengthen your app without changing origin behaviors. HTTP/1.1
