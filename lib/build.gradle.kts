@@ -27,6 +27,9 @@ dependencies {
 
     // https://mvnrepository.com/artifact/io.netty/netty-all
     api("io.netty:netty-all:4.1.85.Final")
+
+    // https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind
+    api("com.fasterxml.jackson.core:jackson-databind:2.14.1")
 }
 
 testing {

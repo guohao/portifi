@@ -7,9 +7,16 @@ import io.netty.channel.ChannelFuture
 import io.netty.channel.ChannelFutureListener
 import io.netty.channel.ChannelHandlerContext
 import io.netty.channel.ChannelInboundHandlerAdapter
+import io.netty.channel.ChannelInitializer
+import io.netty.channel.ChannelPipeline
 import io.netty.channel.ChannelPromise
+import io.netty.handler.logging.LogLevel
+import io.netty.handler.logging.LoggingHandler
 
-class FrontHandler(private val spec: ProxySpec) : ChannelInboundHandlerAdapter() {
+class FrontHandler(
+    private val spec: ProxySpec,
+    private val backConfig: (ChannelPipeline) -> Unit = {}
+) : ChannelInboundHandlerAdapter() {
     private lateinit var connectPromise: ChannelPromise
 
     private lateinit var outboundChannel: Channel
@@ -19,7 +26,16 @@ class FrontHandler(private val spec: ProxySpec) : ChannelInboundHandlerAdapter()
         val b = Bootstrap()
             .group(inboundChannel.eventLoop())
             .channel(ctx.channel().javaClass)
-            .handler(BackHandler(inboundChannel))
+            .handler(
+                object : ChannelInitializer<Channel>() {
+                    override fun initChannel(ch: Channel) {
+                        val p = ch.pipeline()
+                        p.addLast(LoggingHandler(LogLevel.TRACE))
+                        backConfig(p)
+                        p.addLast(BackHandler(inboundChannel))
+                    }
+                }
+            )
         val f: ChannelFuture = b.connect(spec.host(), spec.port())
         this.outboundChannel = f.channel()
         this.connectPromise = ctx.newPromise()

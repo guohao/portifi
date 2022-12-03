@@ -13,6 +13,7 @@ interface ProxySpec {
     fun port(): Int
     fun protocol(): Protocol = Protocol.RAW
     fun host(): String = "localhost"
+    fun convertTo(): Protocol = protocol()
     fun enableTls(): Boolean = false
 }
 
@@ -20,24 +21,29 @@ class ProxySpecBuilder(
     private val port: Int,
     private val protocol: Protocol = Protocol.RAW,
     private val host: String = "localhost",
+    private val convertTo: Protocol = protocol,
     private val enableTls: Boolean = false
 ) {
-    fun protocol(protocol: Protocol): ProxySpecBuilder = ProxySpecBuilder(port, protocol, host, enableTls)
-    fun host(host: String): ProxySpecBuilder = ProxySpecBuilder(port, protocol, host, enableTls)
+    fun protocol(protocol: Protocol): ProxySpecBuilder = ProxySpecBuilder(port, protocol, host, convertTo, enableTls)
+    fun host(host: String): ProxySpecBuilder = ProxySpecBuilder(port, protocol, host, convertTo, enableTls)
 
-    fun enableTls(): ProxySpecBuilder = ProxySpecBuilder(port, protocol, host, true)
+    fun enableTls(): ProxySpecBuilder = ProxySpecBuilder(port, protocol, host, convertTo, true)
 
-    fun build(): ProxySpec = SimpleProxySpec(port, protocol, host, enableTls)
+    fun convertTo(backend: Protocol): ProxySpecBuilder = ProxySpecBuilder(port, protocol, host, backend, enableTls)
+    fun build(): ProxySpec = SimpleProxySpec(port, protocol, host, convertTo, enableTls)
 }
 
 class SimpleProxySpec(
     private val port: Int,
     private val protocol: Protocol,
     private val host: String,
+    private val convertTo: Protocol,
     private val enableTls: Boolean
 ) : ProxySpec {
     override fun port(): Int = port
     override fun protocol(): Protocol = protocol
     override fun enableTls(): Boolean = enableTls
     override fun host(): String = host
+
+    override fun convertTo(): Protocol = convertTo
 }
