@@ -64,7 +64,7 @@ class RespToHttp11Converter : Converter {
 
     override fun configBack(p: ChannelPipeline) {
         p.addLast(HttpClientCodec())
-        p.addLast(HttpObjectAggregator(1048576))
+        p.addLast(HttpObjectAggregator(Int.MAX_VALUE))
     }
 
     class RedisToHttp11Handler : ChannelDuplexHandler() {
