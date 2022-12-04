@@ -10,7 +10,7 @@
 plugins {
     // Apply the org.jetbrains.kotlin.jvm Plugin to add support for Kotlin.
     kotlin("jvm")
-
+    kotlin("plugin.serialization") version "1.7.20"
     // Apply the java-library plugin for API and implementation separation.
     `java-library`
 }
@@ -28,8 +28,7 @@ dependencies {
     // https://mvnrepository.com/artifact/io.netty/netty-all
     api("io.netty:netty-all:4.1.85.Final")
 
-    // https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind
-    api("com.fasterxml.jackson.core:jackson-databind:2.14.1")
+    api("org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.1")
 }
 
 testing {
