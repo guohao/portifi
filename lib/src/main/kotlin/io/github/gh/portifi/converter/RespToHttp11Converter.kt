@@ -86,7 +86,8 @@ private val requestMappers = listOf(GetMapper, SetMapper, ExpireMapper, InfoMapp
 
 private object SetMapper : RespToHttpRequestMapper {
 
-    override fun accept(redisMessage: RedisMessage) = "set".equals(redisMessage.firstString(3), true)
+    private const val SET_NUM = 3
+    override fun accept(redisMessage: RedisMessage) = "set".equals(redisMessage.firstString(SET_NUM), true)
 
     override fun map(redisMessage: RedisMessage): HttpRequest {
         val children = (redisMessage as ArrayRedisMessage).children()
@@ -120,8 +121,11 @@ abstract class QueryCommand(private val command: String, private val paramNum: I
     }
 }
 
-private object GetMapper : QueryCommand("get", 2)
-private object ExpireMapper : QueryCommand("expire", 3)
+private const val TWO = 2
+private const val THREE = 3
+
+private object GetMapper : QueryCommand("get", TWO)
+private object ExpireMapper : QueryCommand("expire", THREE)
 private object InfoMapper : SingleCommand("info")
 private object PingMapper : SingleCommand("ping")
 private object CommandMapper : SingleCommand("command")
