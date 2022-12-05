@@ -11,8 +11,8 @@ plugins {
     // Apply the org.jetbrains.kotlin.jvm Plugin to add support for Kotlin.
     kotlin("jvm")
     kotlin("plugin.serialization") version "1.7.20"
-    // Apply the java-library plugin for API and implementation separation.
     `java-library`
+    `maven-publish`
 }
 
 dependencies {
@@ -37,6 +37,23 @@ testing {
         getting(JvmTestSuite::class) {
             // Use Kotlin Test test framework
             useKotlinTest()
+        }
+    }
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+    withJavadocJar()
+    withSourcesJar()
+}
+publishing {
+    publications {
+        create<MavenPublication>("maven") {
+            from(components["java"])
+            groupId = "io.github.gh"
+            version = "0.0.1-SNAPSHOT"
+            artifactId = "portifi"
         }
     }
 }

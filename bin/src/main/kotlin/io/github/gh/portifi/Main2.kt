@@ -1,8 +1,8 @@
 package io.github.gh.portifi
 
-private const val HTTP_BACKEND_PORT = 8080
+private const val HTTP_BACKEND_PORT = 8088
 private const val GRPC_BACKEND_PORT = 50051
-private const val FRONTEND_PORT = 9999
+private const val FRONTEND_PORT = 8888
 
 fun main() {
     val server = listOf(
