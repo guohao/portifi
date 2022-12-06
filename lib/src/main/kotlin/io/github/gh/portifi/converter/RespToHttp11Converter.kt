@@ -82,7 +82,8 @@ private fun RedisMessage.toHttpRequest(): HttpRequest {
     return requestMappers.first { it.accept(this) }.map(this)
 }
 
-private val requestMappers = listOf(GetMapper, SetMapper, ExpireMapper, InfoMapper, PingMapper, CommandMapper)
+private val requestMappers =
+    listOf(GetMapper, SetMapper, ExpireMapper, InfoMapper, PingMapper, CommandDocsMapper, CommandMapper, DelMapper)
 
 private object SetMapper : RespToHttpRequestMapper {
 
@@ -107,28 +108,33 @@ abstract class SingleCommand(private val command: String) : RespToHttpRequestMap
     override fun map(redisMessage: RedisMessage): HttpRequest = command.httpRequest()
 }
 
-abstract class QueryCommand(private val command: String, private val paramNum: Int) : RespToHttpRequestMapper {
-    override fun accept(redisMessage: RedisMessage): Boolean = command.equals(redisMessage.firstString(paramNum), true)
+abstract class QueryCommand(private vararg val commands: String) : RespToHttpRequestMapper {
+    override fun accept(redisMessage: RedisMessage): Boolean = commands.zip(redisMessage.asArray()!!.children())
+        .all { it.first.equals(it.second.textContent(), true) }
 
     override fun map(redisMessage: RedisMessage): HttpRequest = redisMessage.httpRequest()
 
     private fun RedisMessage.httpRequest(): HttpRequest {
-        val uri = "/$command" + this.asArray()
+        var uri = this.asArray()
             ?.children()
-            ?.drop(1)
+            ?.drop(commands.size)
+            ?.takeIf { it.isNotEmpty() }
             ?.joinToString("/", "/") { it.textContent() }
+            .orEmpty()
+            .let {
+                commands.joinToString("/", "/") + it
+            }
         return DefaultFullHttpRequest(HttpVersion.HTTP_1_1, HttpMethod.GET, uri)
     }
 }
 
-private const val TWO = 2
-private const val THREE = 3
-
-private object GetMapper : QueryCommand("get", TWO)
-private object ExpireMapper : QueryCommand("expire", THREE)
+private object GetMapper : QueryCommand("get")
+private object ExpireMapper : QueryCommand("expire")
 private object InfoMapper : SingleCommand("info")
 private object PingMapper : SingleCommand("ping")
 private object CommandMapper : SingleCommand("command")
+private object CommandDocsMapper : QueryCommand("command", "docs")
+private object DelMapper : SingleCommand("del")
 
 fun JsonElement.toRedisMessage(): RedisMessage =
     when (this) {
