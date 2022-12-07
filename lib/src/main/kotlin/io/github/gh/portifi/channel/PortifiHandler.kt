@@ -8,6 +8,10 @@ import io.netty.channel.ChannelHandlerContext
 import io.netty.handler.codec.ByteToMessageDecoder
 import io.netty.handler.logging.LogLevel
 import io.netty.handler.logging.LoggingHandler
+import org.slf4j.LoggerFactory
+import java.io.IOException
+
+private val log = LoggerFactory.getLogger(PortifiHandler::class.java)
 
 class PortifiHandler(private val specs: List<ProxySpec>) : ByteToMessageDecoder() {
     override fun decode(ctx: ChannelHandlerContext, input: ByteBuf, out: MutableList<Any>) {
@@ -28,6 +32,14 @@ class PortifiHandler(private val specs: List<ProxySpec>) : ByteToMessageDecoder(
             p.remove(this)
         } ?: run {
             specs.firstOrNull { it.protocol().detector().needMoreBytes(input) } ?: ctx.channel().close()
+        }
+    }
+
+    override fun exceptionCaught(ctx: ChannelHandlerContext, cause: Throwable) {
+        if (cause is IOException) {
+            log.debug("[portifi] IOException before recognize protocol. channel=${ctx.channel()}", cause)
+        } else {
+            log.warn("[portifi] Exception before recognize protocol. channel=${ctx.channel()}", cause)
         }
     }
 }

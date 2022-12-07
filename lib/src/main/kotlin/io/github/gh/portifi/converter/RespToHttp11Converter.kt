@@ -25,6 +25,7 @@ import io.netty.handler.codec.redis.RedisEncoder
 import io.netty.handler.codec.redis.RedisMessage
 import io.netty.handler.codec.redis.SimpleStringRedisMessage
 import io.netty.util.CharsetUtil
+import io.netty.util.ReferenceCountUtil
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
@@ -32,6 +33,9 @@ import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.long
+import org.slf4j.LoggerFactory
+
+private val log = LoggerFactory.getLogger(RespToHttp11Converter::class.java)
 
 class RespToHttp11Converter : Converter {
 
@@ -64,12 +68,19 @@ private class RedisToHttp11Handler : ChannelDuplexHandler() {
         } else {
             ErrorRedisMessage((response.data as JsonPrimitive).content)
         }
+        ReferenceCountUtil.release(msg)
         ctx.write(redisMessage, promise)
     }
 
     override fun channelRead(ctx: ChannelHandlerContext, msg: Any) {
-        val request = (msg as RedisMessage).toHttpRequest()
-        ctx.fireChannelRead(request)
+        (msg as RedisMessage).toHttpRequest()?.also {
+            ctx.fireChannelRead(it)
+            ReferenceCountUtil.release(msg)
+        } ?: run {
+            log.error("Unrecognized resp command ${msg.textContent()}")
+            ReferenceCountUtil.release(msg)
+            throw IllegalStateException("Unrecognized resp command")
+        }
     }
 }
 
@@ -78,12 +89,22 @@ private sealed interface RespToHttpRequestMapper {
     fun map(redisMessage: RedisMessage): HttpRequest
 }
 
-private fun RedisMessage.toHttpRequest(): HttpRequest {
-    return requestMappers.first { it.accept(this) }.map(this)
+private fun RedisMessage.toHttpRequest(): HttpRequest? {
+    return requestMappers.firstOrNull { it.accept(this) }?.map(this)
 }
 
 private val requestMappers =
-    listOf(GetMapper, SetMapper, ExpireMapper, InfoMapper, PingMapper, CommandDocsMapper, CommandMapper, DelMapper)
+    listOf(
+        SetMapper,
+        QueryCommand("get"),
+        QueryCommand("expire"),
+        SingleCommand("info"),
+        SingleCommand("ping"),
+        SingleCommand("quit"),
+        QueryCommand("command", "docs"),
+        SingleCommand("command"),
+        QueryCommand("del")
+    )
 
 private object SetMapper : RespToHttpRequestMapper {
 
@@ -102,15 +123,15 @@ private object SetMapper : RespToHttpRequestMapper {
     }
 }
 
-abstract class SingleCommand(private val command: String) : RespToHttpRequestMapper {
+class SingleCommand(private val command: String) : RespToHttpRequestMapper {
     override fun accept(redisMessage: RedisMessage): Boolean = redisMessage.isSingleCommand(command)
 
     override fun map(redisMessage: RedisMessage): HttpRequest = command.httpRequest()
 }
 
-abstract class QueryCommand(private vararg val commands: String) : RespToHttpRequestMapper {
-    override fun accept(redisMessage: RedisMessage): Boolean = commands.zip(redisMessage.asArray()!!.children())
-        .all { it.first.equals(it.second.textContent(), true) }
+class QueryCommand(private vararg val commands: String) : RespToHttpRequestMapper {
+    override fun accept(redisMessage: RedisMessage): Boolean =
+        commands.zip(redisMessage.asArray()!!.children()).all { it.first.equals(it.second.textContent(), true) }
 
     override fun map(redisMessage: RedisMessage): HttpRequest = redisMessage.httpRequest()
 
@@ -128,25 +149,15 @@ abstract class QueryCommand(private vararg val commands: String) : RespToHttpReq
     }
 }
 
-private object GetMapper : QueryCommand("get")
-private object ExpireMapper : QueryCommand("expire")
-private object InfoMapper : SingleCommand("info")
-private object PingMapper : SingleCommand("ping")
-private object CommandMapper : SingleCommand("command")
-private object CommandDocsMapper : QueryCommand("command", "docs")
-private object DelMapper : QueryCommand("del")
+fun JsonElement.toRedisMessage(): RedisMessage = when (this) {
+    is JsonPrimitive -> toRedisMessage()
 
-fun JsonElement.toRedisMessage(): RedisMessage =
-    when (this) {
-        is JsonPrimitive -> toRedisMessage()
+    is JsonArray -> ArrayRedisMessage(map { it.toRedisMessage() })
 
-        is JsonArray ->
-            ArrayRedisMessage(map { it.toRedisMessage() })
-
-        else -> {
-            throw IllegalArgumentException("not support type")
-        }
+    else -> {
+        throw IllegalArgumentException("not support type")
     }
+}
 
 fun JsonPrimitive.toRedisMessage(): RedisMessage {
     return if (isString) {
@@ -166,28 +177,24 @@ private fun RedisMessage.asArray(): ArrayRedisMessage? {
     return takeIf { it is ArrayRedisMessage }?.let { it as ArrayRedisMessage }
 }
 
-private fun RedisMessage.firstString(paramNum: Int): String? =
-    asArray()?.takeIf { it.children().size == paramNum }
-        ?.takeIf { it.children()[0] is FullBulkStringRedisMessage }
-        ?.let { it.children()[0] as FullBulkStringRedisMessage }
-        ?.textContent()
+private fun RedisMessage.firstString(paramNum: Int): String? = asArray()?.takeIf { it.children().size == paramNum }
+    ?.takeIf { it.children()[0] is FullBulkStringRedisMessage }
+    ?.let { it.children()[0] as FullBulkStringRedisMessage }
+    ?.textContent()
 
 private fun RedisMessage.isSingleCommand(command: String): Boolean = command == firstString(1)
 
 @Serializable
 data class RespResponseBox<T>(
-    val success: Boolean,
-    val data: T
+    val success: Boolean, val data: T
 )
 
-private fun RedisMessage.textContent(): String =
-    when (this) {
-        is FullBulkStringRedisMessage ->
-            content().toString(CharsetUtil.UTF_8)
+private fun RedisMessage.textContent(): String = when (this) {
+    is FullBulkStringRedisMessage -> content().toString(CharsetUtil.UTF_8)
 
-        is IntegerRedisMessage -> this.value().toString()
-        is SimpleStringRedisMessage ->
-            content().toString()
+    is IntegerRedisMessage -> this.value().toString()
+    is SimpleStringRedisMessage -> content().toString()
+    is ArrayRedisMessage -> children().map { it.textContent() }.toString()
 
-        else -> throw IllegalArgumentException("not a string")
-    }
+    else -> throw IllegalArgumentException("redis message is not a string")
+}

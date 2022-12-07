@@ -6,6 +6,7 @@ import io.netty.channel.Channel
 import io.netty.channel.ChannelInitializer
 import io.netty.channel.nio.NioEventLoopGroup
 import io.netty.channel.socket.nio.NioServerSocketChannel
+import io.netty.util.concurrent.DefaultThreadFactory
 import java.util.concurrent.Semaphore
 
 class Portifi(private val specs: List<ProxySpec>) {
@@ -16,8 +17,8 @@ class Portifi(private val specs: List<ProxySpec>) {
         if (!stop.tryAcquire()) {
             return this
         }
-        val boss = NioEventLoopGroup(1)
-        val worker = NioEventLoopGroup()
+        val boss = NioEventLoopGroup(1, DefaultThreadFactory("portifi-boos"))
+        val worker = NioEventLoopGroup(DefaultThreadFactory("portifi-worker"))
         val bootstrap = ServerBootstrap()
             .group(boss, worker)
             .channel(NioServerSocketChannel::class.java)

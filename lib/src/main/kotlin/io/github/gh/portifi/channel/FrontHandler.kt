@@ -16,7 +16,6 @@ import org.slf4j.LoggerFactory
 import java.io.IOException
 
 private val log = LoggerFactory.getLogger(FrontHandler::class.java)
-
 class FrontHandler(
     private val spec: ProxySpec,
     private val backConfig: (ChannelPipeline) -> Unit = {}
@@ -80,7 +79,7 @@ class FrontHandler(
         if (cause is IOException) {
             // ignored
         } else {
-            log.error("[portifi] Caught exception with spec=$spec:", cause)
+            log.error("[portifi] Caught exception with spec=$spec channel=${ctx.channel()}", cause)
         }
 
         ctx.channel().flushAndClose()
