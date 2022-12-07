@@ -182,7 +182,7 @@ private fun RedisMessage.firstString(paramNum: Int): String? = asArray()?.takeIf
     ?.let { it.children()[0] as FullBulkStringRedisMessage }
     ?.textContent()
 
-private fun RedisMessage.isSingleCommand(command: String): Boolean = command == firstString(1)
+private fun RedisMessage.isSingleCommand(command: String): Boolean = command.equals(firstString(1),true)
 
 @Serializable
 data class RespResponseBox<T>(
