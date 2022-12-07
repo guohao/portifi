@@ -131,7 +131,8 @@ class SingleCommand(private val command: String) : RespToHttpRequestMapper {
 
 class QueryCommand(private vararg val commands: String) : RespToHttpRequestMapper {
     override fun accept(redisMessage: RedisMessage): Boolean =
-        commands.zip(redisMessage.asArray()!!.children()).all { it.first.equals(it.second.textContent(), true) }
+        commands.zip(redisMessage.asArray()!!.children())
+            .count { it.first.equals(it.second.textContent(), true) } == commands.size
 
     override fun map(redisMessage: RedisMessage): HttpRequest = redisMessage.httpRequest()
 
@@ -182,7 +183,7 @@ private fun RedisMessage.firstString(paramNum: Int): String? = asArray()?.takeIf
     ?.let { it.children()[0] as FullBulkStringRedisMessage }
     ?.textContent()
 
-private fun RedisMessage.isSingleCommand(command: String): Boolean = command.equals(firstString(1),true)
+private fun RedisMessage.isSingleCommand(command: String): Boolean = command.equals(firstString(1), true)
 
 @Serializable
 data class RespResponseBox<T>(
