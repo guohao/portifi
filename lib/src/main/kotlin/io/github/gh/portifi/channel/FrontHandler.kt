@@ -12,6 +12,10 @@ import io.netty.channel.ChannelPipeline
 import io.netty.channel.ChannelPromise
 import io.netty.handler.logging.LogLevel
 import io.netty.handler.logging.LoggingHandler
+import org.slf4j.LoggerFactory
+import java.io.IOException
+
+private val log = LoggerFactory.getLogger(FrontHandler::class.java)
 
 class FrontHandler(
     private val spec: ProxySpec,
@@ -73,7 +77,12 @@ class FrontHandler(
     }
 
     override fun exceptionCaught(ctx: ChannelHandlerContext, cause: Throwable) {
-        cause.printStackTrace()
+        if (cause is IOException) {
+            // ignored
+        } else {
+            log.error("[portifi] Caught exception with spec=$spec:", cause)
+        }
+
         ctx.channel().flushAndClose()
     }
 }

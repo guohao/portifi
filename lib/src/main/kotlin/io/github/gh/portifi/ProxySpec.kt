@@ -47,4 +47,8 @@ class SimpleProxySpec(
     override fun host(): String = host
 
     override fun convertTo(): Protocol = convertTo
+
+    override fun toString(): String {
+        return "port=$port front_protocol=$protocol back_protocol=$convertTo host=$host enable_tls=$enableTls"
+    }
 }
