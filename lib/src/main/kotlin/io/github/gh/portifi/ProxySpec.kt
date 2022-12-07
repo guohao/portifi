@@ -1,6 +1,7 @@
 package io.github.gh.portifi
 
 enum class Protocol {
+    UNSET,
     RAW,
     HTTP1_1,
     HTTP2,
@@ -13,7 +14,7 @@ interface ProxySpec {
     fun port(): Int
     fun protocol(): Protocol = Protocol.RAW
     fun host(): String = "localhost"
-    fun convertTo(): Protocol = protocol()
+    fun convertTo(): Protocol = Protocol.UNSET
     fun enableTls(): Boolean = false
 }
 

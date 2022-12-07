@@ -115,7 +115,7 @@ abstract class QueryCommand(private vararg val commands: String) : RespToHttpReq
     override fun map(redisMessage: RedisMessage): HttpRequest = redisMessage.httpRequest()
 
     private fun RedisMessage.httpRequest(): HttpRequest {
-        var uri = this.asArray()
+        val uri = this.asArray()
             ?.children()
             ?.drop(commands.size)
             ?.takeIf { it.isNotEmpty() }
@@ -134,7 +134,7 @@ private object InfoMapper : SingleCommand("info")
 private object PingMapper : SingleCommand("ping")
 private object CommandMapper : SingleCommand("command")
 private object CommandDocsMapper : QueryCommand("command", "docs")
-private object DelMapper : SingleCommand("del")
+private object DelMapper : QueryCommand("del")
 
 fun JsonElement.toRedisMessage(): RedisMessage =
     when (this) {

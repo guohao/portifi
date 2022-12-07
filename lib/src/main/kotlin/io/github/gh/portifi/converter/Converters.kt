@@ -14,14 +14,18 @@ interface Converter {
     fun configBack(p: ChannelPipeline) = Unit
 }
 
-val converters = listOf(NothingConverter(), RespToHttp11Converter())
+val converters = listOf(NothingConverter, RespToHttp11Converter())
 
-class NothingConverter : Converter {
+object NothingConverter : Converter {
     override fun frontProtocol(): Protocol = Protocol.RAW
 
     override fun backProtocol(): Protocol = Protocol.RAW
 }
 
 fun ProxySpec.converter(): Converter {
-    return converters.first { protocol() == it.frontProtocol() && convertTo() == it.backProtocol() }
+    return if (convertTo() == Protocol.UNSET || protocol() == convertTo()) {
+        NothingConverter
+    } else {
+        converters.first { protocol() == it.frontProtocol() && convertTo() == it.backProtocol() }
+    }
 }
