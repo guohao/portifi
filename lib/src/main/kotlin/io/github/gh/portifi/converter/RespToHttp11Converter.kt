@@ -60,8 +60,7 @@ class RespToHttp11Converter : Converter {
 private class RedisToHttp11Handler : ChannelDuplexHandler() {
 
     override fun write(ctx: ChannelHandlerContext, msg: Any, promise: ChannelPromise) {
-        val response = (msg as FullHttpResponse).content()
-            .toString(CharsetUtil.UTF_8)
+        val response = (msg as FullHttpResponse).content().toString(CharsetUtil.UTF_8)
             .let { Json.decodeFromString<RespResponseBox<JsonElement>>(it) }
         val redisMessage = if (response.success) {
             response.data.toRedisMessage()
@@ -73,14 +72,15 @@ private class RedisToHttp11Handler : ChannelDuplexHandler() {
     }
 
     override fun channelRead(ctx: ChannelHandlerContext, msg: Any) {
-        (msg as RedisMessage).toHttpRequest()?.also {
-            ctx.fireChannelRead(it)
+        val request = (msg as RedisMessage).toHttpRequest()
+        check(request != null) {
+            val errorMsg = "Unrecognized resp command ${msg.textContent()}"
             ReferenceCountUtil.release(msg)
-        } ?: run {
-            log.error("Unrecognized resp command ${msg.textContent()}")
-            ReferenceCountUtil.release(msg)
-            throw IllegalStateException("Unrecognized resp command")
+            log.error(errorMsg)
+            errorMsg
         }
+        ctx.fireChannelRead(request)
+        ReferenceCountUtil.release(msg)
     }
 }
 
@@ -93,18 +93,18 @@ private fun RedisMessage.toHttpRequest(): HttpRequest? {
     return requestMappers.firstOrNull { it.accept(this) }?.map(this)
 }
 
-private val requestMappers =
-    listOf(
-        SetMapper,
-        QueryCommand("get"),
-        QueryCommand("expire"),
-        SingleCommand("info"),
-        SingleCommand("ping"),
-        SingleCommand("quit"),
-        QueryCommand("command", "docs"),
-        SingleCommand("command"),
-        QueryCommand("del")
-    )
+private val requestMappers = listOf(
+    SetMapper,
+    QueryCommand("get"),
+    QueryCommand("keys"),
+    QueryCommand("expire"),
+    SingleCommand("info"),
+    SingleCommand("ping"),
+    SingleCommand("quit"),
+    QueryCommand("command", "docs"),
+    SingleCommand("command"),
+    QueryCommand("del")
+)
 
 private object SetMapper : RespToHttpRequestMapper {
 
@@ -116,8 +116,7 @@ private object SetMapper : RespToHttpRequestMapper {
         val key = (children[1] as FullBulkStringRedisMessage).textContent()
         val value = (children[2] as FullBulkStringRedisMessage).content().retain()
         val request = DefaultFullHttpRequest(HttpVersion.HTTP_1_1, HttpMethod.POST, "/set/$key", value)
-        request.headers()
-            .add(HttpHeaderNames.CONTENT_TYPE, "text/plain")
+        request.headers().add(HttpHeaderNames.CONTENT_TYPE, "text/plain")
             .add(HttpHeaderNames.CONTENT_LENGTH, value.readableBytes())
         return request
     }
@@ -130,20 +129,14 @@ class SingleCommand(private val command: String) : RespToHttpRequestMapper {
 }
 
 class QueryCommand(private vararg val commands: String) : RespToHttpRequestMapper {
-    override fun accept(redisMessage: RedisMessage): Boolean =
-        commands.zip(redisMessage.asArray()!!.children())
-            .count { it.first.equals(it.second.textContent(), true) } == commands.size
+    override fun accept(redisMessage: RedisMessage): Boolean = commands.zip(redisMessage.asArray()!!.children())
+        .count { it.first.equals(it.second.textContent(), true) } == commands.size
 
     override fun map(redisMessage: RedisMessage): HttpRequest = redisMessage.httpRequest()
 
     private fun RedisMessage.httpRequest(): HttpRequest {
-        val uri = this.asArray()
-            ?.children()
-            ?.drop(commands.size)
-            ?.takeIf { it.isNotEmpty() }
-            ?.joinToString("/", "/") { it.textContent() }
-            .orEmpty()
-            .let {
+        val uri = this.asArray()?.children()?.drop(commands.size)?.takeIf { it.isNotEmpty() }
+            ?.joinToString("/", "/") { it.textContent() }.orEmpty().let {
                 commands.joinToString("/", "/") + it
             }
         return DefaultFullHttpRequest(HttpVersion.HTTP_1_1, HttpMethod.GET, uri)
@@ -178,16 +171,16 @@ private fun RedisMessage.asArray(): ArrayRedisMessage? {
     return takeIf { it is ArrayRedisMessage }?.let { it as ArrayRedisMessage }
 }
 
-private fun RedisMessage.firstString(paramNum: Int): String? = asArray()?.takeIf { it.children().size == paramNum }
-    ?.takeIf { it.children()[0] is FullBulkStringRedisMessage }
-    ?.let { it.children()[0] as FullBulkStringRedisMessage }
-    ?.textContent()
+private fun RedisMessage.firstString(paramNum: Int): String? =
+    asArray()?.takeIf { it.children().size == paramNum }?.takeIf { it.children()[0] is FullBulkStringRedisMessage }
+        ?.let { it.children()[0] as FullBulkStringRedisMessage }?.textContent()
 
 private fun RedisMessage.isSingleCommand(command: String): Boolean = command.equals(firstString(1), true)
 
 @Serializable
 data class RespResponseBox<T>(
-    val success: Boolean, val data: T
+    val success: Boolean,
+    val data: T
 )
 
 private fun RedisMessage.textContent(): String = when (this) {

@@ -16,16 +16,10 @@ plugins {
 }
 
 dependencies {
-    // Align versions of all Kotlin components
     api(platform("org.jetbrains.kotlin:kotlin-bom"))
 
-    // Use the Kotlin JDK 8 standard library.
     api("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-
-    // https://mvnrepository.com/artifact/org.slf4j/slf4j-api
     api("org.slf4j:slf4j-api:2.0.5")
-
-    // https://mvnrepository.com/artifact/io.netty/netty-all
     api("io.netty:netty-all:4.1.85.Final")
 
     api("org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.1")
@@ -35,7 +29,7 @@ testing {
     suites {
         // Configure the built-in test suite
         getting(JvmTestSuite::class) {
-            // Use Kotlin Test test framework
+            // Use KotlinTest test framework
             useKotlinTest()
         }
     }
