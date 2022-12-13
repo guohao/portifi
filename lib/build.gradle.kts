@@ -20,7 +20,7 @@ dependencies {
 
     api("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     api("org.slf4j:slf4j-api:2.0.5")
-    api("io.netty:netty-all:4.1.85.Final")
+    api("io.netty:netty-all:4.1.86.Final")
 
     api("org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.1")
 }
