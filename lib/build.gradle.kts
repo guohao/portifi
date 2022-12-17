@@ -21,7 +21,6 @@ dependencies {
     api("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     api("org.slf4j:slf4j-api:2.0.6")
     api("io.netty:netty-all:4.1.86.Final")
-
     api("org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.1")
 }
 
@@ -42,8 +41,18 @@ java {
     withSourcesJar()
 }
 publishing {
+    repositories {
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/guohao/portifi")
+            credentials {
+                username = project.findProperty("gpr.user") as String? ?: System.getenv("USERNAME")
+                password = project.findProperty("gpr.key") as String? ?: System.getenv("TOKEN")
+            }
+        }
+    }
     publications {
-        create<MavenPublication>("maven") {
+        register<MavenPublication>("gpr") {
             from(components["java"])
             groupId = "io.github.gh"
             version = "0.0.1-SNAPSHOT"
