@@ -55,7 +55,7 @@ publishing {
         register<MavenPublication>("gpr") {
             from(components["java"])
             groupId = "io.github.gh"
-            version = "0.0.1"
+            version = "0.0.2-SNAPSHOT"
             artifactId = "portifi"
         }
     }
