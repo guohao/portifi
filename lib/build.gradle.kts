@@ -11,9 +11,12 @@ plugins {
     // Apply the org.jetbrains.kotlin.jvm Plugin to add support for Kotlin.
     kotlin("jvm")
     kotlin("plugin.serialization") version "1.7.22"
+    signing
     `java-library`
     `maven-publish`
 }
+group = "io.github.guohao"
+version = "0.0.2-SNAPSHOT"
 
 dependencies {
     api(platform("org.jetbrains.kotlin:kotlin-bom"))
@@ -40,23 +43,60 @@ java {
     withJavadocJar()
     withSourcesJar()
 }
+
+
 publishing {
-    repositories {
-        maven {
-            name = "GitHubPackages"
-            url = uri("https://maven.pkg.github.com/guohao/portifi")
-            credentials {
-                username = project.findProperty("gpr.user") as String? ?: System.getenv("USERNAME")
-                password = project.findProperty("gpr.key") as String? ?: System.getenv("TOKEN")
-            }
-        }
-    }
+
     publications {
-        register<MavenPublication>("gpr") {
+        register<MavenPublication>("mavenJava") {
             from(components["java"])
             groupId = "io.github.guohao"
             version = "0.0.2-SNAPSHOT"
             artifactId = "portifi"
+            pom {
+                name.set("$groupId:$artifactId")
+                description.set("A powerful reversed gateway")
+                url.set("https://github.com/guohao/portifi/")
+                licenses {
+                    license {
+                        name.set("The Apache License, Version 2.0")
+                        url.set("https://www.apache.org/licenses/LICENSE-2.0.txt")
+                    }
+                }
+                developers {
+                    developer {
+                        id.set("guohao")
+                        name.set("Hao Guo")
+                        email.set("guohaoice@gmail.com")
+                    }
+                }
+                scm {
+                    connection.set("scm:git:git://github.com/guohao/portifi.git")
+                    developerConnection.set("scm:git:ssh://github.com/guohao/portifi.git")
+                    url.set("https://github.com/guohao/portifi/tree/main")
+                }
+            }
+        }
+    }
+    repositories {
+        maven {
+            name = "mavenCentral"
+            val releasesRepoUrl = uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
+            val snapshotsRepoUrl = uri("https://s01.oss.sonatype.org/content/repositories/snapshots/")
+            url = if (!version.toString().endsWith("SNAPSHOT")) releasesRepoUrl else snapshotsRepoUrl
+            credentials {
+                username = project.findProperty("ossrhUsername") as String? ?: System.getenv("USERNAME")
+                password = project.findProperty("ossrhPassword") as String? ?: System.getenv("TOKEN")
+            }
         }
     }
 }
+signing {
+    sign(publishing.publications["mavenJava"])
+}
+tasks.javadoc {
+    if (JavaVersion.current().isJava9Compatible) {
+        (options as StandardJavadocDocletOptions).addBooleanOption("html5", true)
+    }
+}
+
