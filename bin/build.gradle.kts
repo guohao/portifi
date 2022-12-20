@@ -10,5 +10,5 @@ dependencies {
 }
 
 application {
-    mainClass.set("io.github.gh.portifi.MainKt")
+    mainClass.set("io.github.guohao.portifi.MainKt")
 }

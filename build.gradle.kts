@@ -1,7 +1,7 @@
 plugins {
     kotlin("jvm") version "1.7.22" apply false
 }
-group = "io.github.gh"
+group = "io.github.guohao"
 version = "0.0.2-SNAPSHOT"
 
 allprojects {

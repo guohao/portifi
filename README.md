@@ -34,7 +34,7 @@ Add `Portifi` to your `build.gradle.kts`.
 
 ```kotlin
 dependencies {
-    implementation("io.github.gh:portifi:0.0.1")
+    implementation("io.github.guohao:portifi:0.0.1")
 }
 ```
 
