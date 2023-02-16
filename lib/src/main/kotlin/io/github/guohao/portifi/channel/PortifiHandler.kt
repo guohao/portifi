@@ -35,6 +35,7 @@ class PortifiHandler(private val specs: List<ProxySpec>) : ByteToMessageDecoder(
         }
     }
 
+    @Deprecated("Deprecated in Java")
     override fun exceptionCaught(ctx: ChannelHandlerContext, cause: Throwable) {
         if (cause is IOException) {
             log.debug("[portifi] IOException before recognize protocol. channel=${ctx.channel()}", cause)

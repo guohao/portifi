@@ -75,6 +75,7 @@ class FrontHandler(
         outboundChannel.flushAndClose()
     }
 
+    @Deprecated("Deprecated in Java")
     override fun exceptionCaught(ctx: ChannelHandlerContext, cause: Throwable) {
         if (cause is IOException) {
             // ignored

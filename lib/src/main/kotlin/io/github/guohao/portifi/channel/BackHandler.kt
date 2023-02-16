@@ -14,6 +14,7 @@ class BackHandler(private val inboundChannel: Channel) : ChannelInboundHandlerAd
         inboundChannel.flushAndClose()
     }
 
+    @Deprecated("Deprecated in Java")
     override fun exceptionCaught(ctx: ChannelHandlerContext, cause: Throwable) {
         cause.printStackTrace()
         ctx.channel().flushAndClose()
