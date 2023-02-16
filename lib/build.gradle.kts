@@ -25,16 +25,11 @@ dependencies {
     api("org.slf4j:slf4j-api:2.0.6")
     api("io.netty:netty-all:4.1.89.Final")
     api("org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.1")
+    testImplementation(kotlin("test"))
 }
 
-testing {
-    suites {
-        // Configure the built-in test suite
-        getting(JvmTestSuite::class) {
-            // Use KotlinTest test framework
-            useKotlinTest()
-        }
-    }
+tasks.test {
+    useJUnitPlatform()
 }
 
 java {
