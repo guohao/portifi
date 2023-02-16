@@ -8,8 +8,8 @@ class QueryStringEncodeTest {
     @Test
     fun testEncodeAndDecode() {
         val input = "a:= b"
-        val encoded = URLEncoder.encode(input,"utf-8")
-        val decoded = URLDecoder.decode(encoded,"utf-8")
+        val encoded = URLEncoder.encode(input, "utf-8")
+        val decoded = URLDecoder.decode(encoded, "utf-8")
         assertEquals(input, decoded)
     }
 }

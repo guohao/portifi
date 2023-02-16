@@ -12,13 +12,13 @@ fun main() {
         ProxySpecBuilder(HTTP_BACKEND_PORT)
             .protocol(Protocol.RESP)
             .convertTo(Protocol.HTTP1_1)
-            .build()
+            .build(),
     ).asServer()
         .start(FRONTEND_PORT)
     Runtime.getRuntime().addShutdownHook(
         Thread {
             server.stop()
-        }
+        },
     )
     server.blockUntilStop()
 }

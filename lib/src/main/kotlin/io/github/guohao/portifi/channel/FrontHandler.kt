@@ -18,7 +18,7 @@ import java.io.IOException
 private val log = LoggerFactory.getLogger(FrontHandler::class.java)
 class FrontHandler(
     private val spec: ProxySpec,
-    private val backConfig: (ChannelPipeline) -> Unit = {}
+    private val backConfig: (ChannelPipeline) -> Unit = {},
 ) : ChannelInboundHandlerAdapter() {
     private lateinit var connectPromise: ChannelPromise
 
@@ -37,7 +37,7 @@ class FrontHandler(
                         backConfig(p)
                         p.addLast(BackHandler(inboundChannel))
                     }
-                }
+                },
             )
         val f: ChannelFuture = b.connect(spec.host(), spec.port())
         this.outboundChannel = f.channel()
@@ -49,7 +49,7 @@ class FrontHandler(
                 } else {
                     connectPromise.tryFailure(future.cause())
                 }
-            }
+            },
         )
     }
 

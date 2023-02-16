@@ -28,7 +28,7 @@ class Portifi(private val specs: List<ProxySpec>) {
                         ch.pipeline()
                             .addLast(PortifiHandler(specs))
                     }
-                }
+                },
             )
             .bind(host, port)
         stopActions.add {

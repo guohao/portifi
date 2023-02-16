@@ -13,7 +13,7 @@ class Main {
         Runtime.getRuntime().addShutdownHook(
             Thread {
                 server.stop()
-            }
+            },
         )
         server.blockUntilStop()
     }

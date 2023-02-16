@@ -24,7 +24,7 @@ class Http2Detector : ProtocolDetector {
             0,
             clientPreface,
             0,
-            bytesRead
+            bytesRead,
         ) && bytesRead < prefaceLen
     }
 
@@ -37,7 +37,7 @@ class Http2Detector : ProtocolDetector {
             0,
             clientPreface,
             0,
-            bytesRead
+            bytesRead,
         )
     }
 }

@@ -103,7 +103,7 @@ private val requestMappers = listOf(
     SingleCommand("quit"),
     QueryCommand("command", "docs"),
     SingleCommand("command"),
-    QueryCommand("del")
+    QueryCommand("del"),
 )
 
 private object SetMapper : RespToHttpRequestMapper {
@@ -137,8 +137,8 @@ class QueryCommand(private vararg val commands: String) : RespToHttpRequestMappe
     private fun RedisMessage.httpRequest(): HttpRequest {
         val uri = this.asArray()?.children()?.drop(commands.size)?.takeIf { it.isNotEmpty() }
             ?.joinToString("/", "/") { it.textContent() }.orEmpty().let {
-                commands.joinToString("/", "/") + it
-            }
+            commands.joinToString("/", "/") + it
+        }
         return DefaultFullHttpRequest(HttpVersion.HTTP_1_1, HttpMethod.GET, uri)
     }
 }
@@ -180,7 +180,7 @@ private fun RedisMessage.isSingleCommand(command: String): Boolean = command.equ
 @Serializable
 data class RespResponseBox<T>(
     val success: Boolean,
-    val data: T
+    val data: T,
 )
 
 private fun RedisMessage.textContent(): String = when (this) {
