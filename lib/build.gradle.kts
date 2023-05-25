@@ -23,7 +23,7 @@ dependencies {
 
     api("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     api("org.slf4j:slf4j-api:2.0.7")
-    api("io.netty:netty-all:4.1.92.Final")
+    api("io.netty:netty-all:4.1.93.Final")
     api("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1")
     testImplementation(kotlin("test"))
 }
