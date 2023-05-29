@@ -6,7 +6,7 @@ plugins {
 dependencies {
     implementation(project(":lib"))
     runtimeOnly(libs.bundles.logback)
-    implementation("com.charleskorn.kaml:kaml:0.53.0")
+    implementation("com.charleskorn.kaml:kaml:0.54.0")
 }
 
 application {
