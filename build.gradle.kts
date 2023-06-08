@@ -1,5 +1,5 @@
 plugins {
-    kotlin("jvm") version "1.8.21" apply false
+    kotlin("jvm") version "1.8.22" apply false
 }
 group = "io.github.guohao"
 version = "0.0.2-SNAPSHOT"
