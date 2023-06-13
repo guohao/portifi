@@ -18,7 +18,7 @@ val grpc = "1.55.1"
 dependencies {
     implementation(project(":lib"))
 
-    val logback = "1.4.7"
+    val logback = "1.4.8"
     runtimeOnly("ch.qos.logback:logback-classic:$logback")
     runtimeOnly("ch.qos.logback:logback-core:$logback")
 
