@@ -10,7 +10,7 @@
 plugins {
     // Apply the org.jetbrains.kotlin.jvm Plugin to add support for Kotlin.
     kotlin("jvm")
-    kotlin("plugin.serialization") version "1.8.22"
+    kotlin("plugin.serialization") version "1.9.0"
     signing
     `java-library`
     `maven-publish`
