@@ -28,7 +28,7 @@ dependencies {
     implementation("org.http4k:http4k-client-apache")
 
     implementation("com.github.kstyrc:embedded-redis:0.6")
-    implementation("org.redisson:redisson:3.22.0")
+    implementation("org.redisson:redisson:3.23.0")
 
     runtimeOnly("io.grpc:grpc-netty:$grpc")
     implementation("io.grpc:grpc-protobuf:$grpc")
