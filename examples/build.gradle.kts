@@ -14,7 +14,9 @@ sourceSets {
         }
     }
 }
+
 val grpc = "1.57.1"
+
 dependencies {
     implementation(project(":lib"))
 
