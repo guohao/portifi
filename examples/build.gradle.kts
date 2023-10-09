@@ -24,7 +24,7 @@ dependencies {
     runtimeOnly("ch.qos.logback:logback-classic:$logback")
     runtimeOnly("ch.qos.logback:logback-core:$logback")
 
-    implementation(platform("org.http4k:http4k-bom:5.5.0.0"))
+    implementation(platform("org.http4k:http4k-bom:5.8.4.0"))
     implementation("org.http4k:http4k-core")
     implementation("org.http4k:http4k-server-undertow")
     implementation("org.http4k:http4k-client-apache")
